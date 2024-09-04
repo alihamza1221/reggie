@@ -27,3 +27,6 @@ const teamSchema: Schema<Team> = new Schema<Team>({
 export const teamModel =
   (mongoose.models.Team as mongoose.Model<Team>) ||
   mongoose.model<Team>("Team", teamSchema);
+
+export type { Team };
+export { teamSchema };

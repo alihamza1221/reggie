@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import { ProjectType } from "@/lib/ProjectTypes";
+import { ProjectType } from "@/lib/ProjectTags";
 import { Upvote, upvoteSchema } from "./upvotes";
 
 interface Project extends Document {
@@ -20,7 +20,7 @@ interface Project extends Document {
 //write schema
 const projectSchema = new Schema<Project>({
   id: { type: String, required: true, default: uuidv4 },
-  tags: [{ type: String, default: "others" }],
+  tags: [{ type: String, default: ["others"] }],
   description: { type: String, default: "" },
   title: { type: String, required: true, default: "" },
   url: { type: String, default: "" },
@@ -28,7 +28,7 @@ const projectSchema = new Schema<Project>({
   active: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 
-  upVotes: [upvoteSchema],
+  upVotes: [{ type: upvoteSchema, default: [] }],
   organizationId: { type: String, required: true, ref: "Organization" },
   teamId: { type: String, required: true, ref: "Teams", unique: true },
 });
