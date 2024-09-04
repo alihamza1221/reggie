@@ -1,12 +1,13 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
 import dbConnect from "@/db/mongooseConnect";
+import { userModel } from "@/db/models/user";
 
 export const nextAuthOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       profile(profile) {
         return {
           id: profile.sub,
@@ -20,11 +21,22 @@ export const nextAuthOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user }) {
       const { email, name, image, id } = user;
-      if (!email) return false;
+      if (!(email && name && image && id)) return false;
       try {
         await dbConnect();
-        const existingUser = null;
-        const newUser = null;
+        const existingUser = await userModel.findOne({ email });
+        if (existingUser) {
+          console.log("user already exists\n");
+          return true;
+        }
+
+        const newUser = await userModel.create({
+          email,
+          name,
+          image,
+          id,
+          provider: "Google",
+        });
       } catch (err) {
         return false;
       }

@@ -14,7 +14,7 @@ interface IEvent extends Document {
   TeamsApplied_id: [string];
   TeamsAccepted_id: [string];
 
-  organizationId: string;
+  userId: string;
 }
 
 // event schema
@@ -39,7 +39,7 @@ const eventSchema: Schema<IEvent> = new Schema<IEvent>({
     ref: "Team",
   },
 
-  organizationId: { type: String, required: true, ref: "User" },
+  userId: { type: String, required: true, ref: "User" },
 });
 
 // event model
