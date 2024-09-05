@@ -37,6 +37,7 @@ export const nextAuthOptions: NextAuthOptions = {
           id,
           provider: "Google",
         });
+        newUser.save();
       } catch (err) {
         return false;
       }

@@ -12,12 +12,12 @@ interface Project extends Document {
   image?: string;
   active: boolean;
   createdAt: Date;
-  organizationId: string;
+  eventId: string;
   upVotes: Upvote[];
   teamId: string;
 }
 
-//write schema
+// schema
 const projectSchema = new Schema<Project>({
   id: { type: String, required: true, default: uuidv4 },
   tags: [{ type: String, default: ["others"] }],
@@ -29,10 +29,10 @@ const projectSchema = new Schema<Project>({
   createdAt: { type: Date, default: Date.now },
 
   upVotes: [{ type: upvoteSchema, default: [] }],
-  organizationId: { type: String, required: true, ref: "Organization" },
+  eventId: { type: String, required: true, ref: "Event" },
   teamId: { type: String, required: true, ref: "Teams", unique: true },
 });
 
-const ProjectModel =
+export const ProjectModel =
   (mongoose.models.Project as mongoose.Model<Project>) ||
   mongoose.model<Project>("Project", projectSchema);

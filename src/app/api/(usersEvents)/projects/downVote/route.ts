@@ -1,8 +1,7 @@
-import { eventModel } from "@/db/models/event";
+import { ProjectModel } from "@/db/models/project";
 import dbConnect from "@/db/mongooseConnect";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 export const GET = async (req: NextRequest) => {
   const session = await getServerSession();
@@ -22,9 +21,16 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  //find users by role
+  //pull user upvote
   await dbConnect();
-  const reqEvents = await eventModel.find({ id: eventId }); // debug query
+  const reqEvents = await ProjectModel.findOne(
+    { id: eventId },
+    {
+      $pull: {
+        userId: session.user.id,
+      },
+    }
+  );
   return NextResponse.json(
     {
       data: reqEvents,
