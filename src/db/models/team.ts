@@ -6,7 +6,7 @@ interface Team extends Document {
   id: string;
   name: string;
   image: string;
-  members: [IUser];
+  members: [string];
 }
 
 const teamSchema: Schema<Team> = new Schema<Team>({
@@ -22,6 +22,7 @@ const teamSchema: Schema<Team> = new Schema<Team>({
     default:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu9s06DiCw2vcK8LCV68dnZU8-A1cyl5U2FA&s",
   },
+  members: [{ type: String, ref: "User" }],
 });
 
 export const teamModel =

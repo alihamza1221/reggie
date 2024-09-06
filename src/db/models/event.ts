@@ -9,7 +9,6 @@ interface IEvent extends Document {
   date: Date | string;
   location: string;
   createdAt: Date;
-  isEnded: boolean;
 
   TeamsApplied_id: [string];
   TeamsAccepted_id: [string];
@@ -29,8 +28,6 @@ const eventSchema: Schema<IEvent> = new Schema<IEvent>({
   },
   location: { type: String, required: true, default: "Remote" },
   createdAt: { type: Date, required: true, default: Date.now },
-  isEnded: { type: Boolean, required: true, default: false },
-
   TeamsApplied_id: { type: [String], required: true, default: [], ref: "Team" },
   TeamsAccepted_id: {
     type: [String],

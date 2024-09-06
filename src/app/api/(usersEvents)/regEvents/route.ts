@@ -15,9 +15,6 @@ const createEventSchema = z.object({
 export const GET = async (req: NextRequest) => {
   const session: Session | null = await getServerSession(nextAuthOptions);
 
-  //get query params
-  const isEnded = req.nextUrl.searchParams.get("isEnded");
-
   //check if user is authenticated
   if (!session) {
     return NextResponse.json(
@@ -32,7 +29,7 @@ export const GET = async (req: NextRequest) => {
 
   //find users by role
   await dbConnect();
-  const reqEvents = await eventModel.find({ isEnded });
+  const reqEvents = await eventModel.find();
   return NextResponse.json(
     {
       data: reqEvents,
