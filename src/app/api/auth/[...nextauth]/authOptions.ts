@@ -14,28 +14,26 @@ export const nextAuthOptions: NextAuthOptions = {
           name: profile.name,
           email: profile.email,
           image: profile.picture,
+          provider: "Google",
         };
       },
     }),
   ],
   callbacks: {
+    //@ts-ignore
+    //user is received as params user can be passed from jwt to session for security
     async signIn({ user }) {
-      const { email, name, image, id } = user;
-      if (!(email && name && image && id)) return false;
+      if (!user) return false;
       try {
         await dbConnect();
-        const existingUser = await userModel.findOne({ email });
+        const existingUser = await userModel.findOne({ email: user.email });
         if (existingUser) {
           console.log("user already exists\n");
           return true;
         }
 
         const newUser = await userModel.create({
-          email,
-          name,
-          image,
-          id,
-          provider: "Google",
+          ...user,
         });
         newUser.save();
       } catch (err) {
@@ -43,6 +41,32 @@ export const nextAuthOptions: NextAuthOptions = {
       }
 
       return true;
+    },
+    //@ts-ignore
+    async jwt({ token, user }) {
+      console.log("api/auth/jwt callback user ->", user, "token_>", token);
+      return token;
+    },
+    //update user in session
+
+    /* @session.user = { 
+        username: string;
+        email: string;
+        image: string;
+         } */
+    //@ts-ignore
+    async session({ session, token }) {
+      session.user.id = token.sub ?? "";
+      session.user.provider = "Google";
+      console.log("api/auth/nextauth session callback->:", session);
+      /*  @session.user = { 
+        id: "sdjfj2323r2klje934";
+        username: "username";
+        email: email@gmail.com;
+        image: https://example.com/image.jpg;
+        provider: "Google";
+      } */
+      return session;
     },
   },
   pages: {

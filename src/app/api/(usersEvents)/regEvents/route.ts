@@ -1,7 +1,9 @@
 import { eventModel } from "@/db/models/event";
 import dbConnect from "@/db/mongooseConnect";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
+import { nextAuthOptions } from "../../auth/[...nextauth]/authOptions";
 import { NextRequest, NextResponse } from "next/server";
+import { Session } from "next-auth";
 import { z } from "zod";
 
 const createEventSchema = z.object({
@@ -11,7 +13,7 @@ const createEventSchema = z.object({
   location: z.string(),
 });
 export const GET = async (req: NextRequest) => {
-  const session = await getServerSession();
+  const session: Session | null = await getServerSession(nextAuthOptions);
 
   //get query params
   const isEnded = req.nextUrl.searchParams.get("isEnded");
@@ -41,7 +43,7 @@ export const GET = async (req: NextRequest) => {
 
 //add users with rule as organization
 export const POST = async (req: NextRequest) => {
-  const session = await getServerSession();
+  const session: Session | null = await getServerSession(nextAuthOptions);
 
   //check if user is authenticated
   if (!session) {
@@ -56,9 +58,16 @@ export const POST = async (req: NextRequest) => {
   }
 
   //create Event
-  const { name, description, date, location } = createEventSchema.parse(
-    await req.body
-  );
+  const {
+    name,
+    description,
+    date: strDate,
+    location,
+  } = createEventSchema.parse(await req.json());
+
+  // strDate = "12/11/1989" -> Date object
+  const date = new Date(strDate);
+  console.log(name, description, date, location);
 
   if (!(name && description)) {
     return NextResponse.json(
@@ -70,6 +79,7 @@ export const POST = async (req: NextRequest) => {
       }
     );
   }
+  console.log("api/regEvents/post: -> session", session);
   try {
     await dbConnect();
     const event = await eventModel.create({
@@ -77,8 +87,9 @@ export const POST = async (req: NextRequest) => {
       description,
       date,
       location,
-      userId: session.user.id,
+      userId: session.user?.id,
     });
+    await event.save();
   } catch (err) {
     return NextResponse.json(
       {

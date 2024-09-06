@@ -7,7 +7,7 @@ export const GET = async (req: NextRequest) => {
   const session = await getServerSession();
 
   //get query params
-  const eventId = req.nextUrl.searchParams.get("eventId");
+  const projectId = req.nextUrl.searchParams.get("projectId");
 
   //check if user is authenticated
   if (!session) {
@@ -24,7 +24,7 @@ export const GET = async (req: NextRequest) => {
   //pull user upvote
   await dbConnect();
   const reqEvents = await ProjectModel.findOne(
-    { id: eventId },
+    { id: projectId },
     {
       $pull: {
         userId: session.user.id,
