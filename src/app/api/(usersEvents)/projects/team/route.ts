@@ -1,22 +1,15 @@
-import { eventModel } from "@/db/models/event";
+import { ProjectModel } from "@/db/models/project";
 import dbConnect from "@/db/mongooseConnect";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (
-  req: NextRequest,
-  {
-    params,
-  }: {
-    params: {
-      eventId: string;
-    };
-  }
-) => {
+export const GET = async (req: NextRequest) => {
   const session = await getServerSession();
-  console.log("api/regEvents/[eventId] -> event id ->>", params.eventId);
-  if (!session || !params.eventId) {
+  const teamId = req.nextUrl.searchParams.get("teamId");
+
+  //check if user is authenticated
+  if (!session || !teamId) {
     return NextResponse.json(
       {
         message: "Unauthenticated",
@@ -28,12 +21,13 @@ export const GET = async (
   }
 
   try {
+    //find users by role
     await dbConnect();
-    const curEvent = await eventModel.findOne({ id: params.eventId });
+    const teamProjects = await ProjectModel.find({ teamId: teamId });
 
     return NextResponse.json(
       {
-        data: curEvent,
+        data: teamProjects,
       },
       { status: 200 }
     );
@@ -42,7 +36,7 @@ export const GET = async (
       {
         message: err?.message,
       },
-      { status: 403 }
+      { status: 500 }
     );
   }
 };

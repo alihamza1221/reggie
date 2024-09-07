@@ -20,7 +20,7 @@ export const POST = async (
   const session = await getServerSession();
 
   const { membersId } = TeamMembers.parse(await req.json());
-  console.log("api/team/[teamId] -> members[] : ", membersId);
+  console.log("api/addMembers[teamId]-> members[] : ", membersId);
 
   if (!membersId || !session || !params.teamId) {
     return NextResponse.json(

@@ -1,22 +1,15 @@
 import { eventModel } from "@/db/models/event";
+import { teamModel } from "@/db/models/team";
 import dbConnect from "@/db/mongooseConnect";
 import { getServerSession } from "next-auth";
-
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (
-  req: NextRequest,
-  {
-    params,
-  }: {
-    params: {
-      eventId: string;
-    };
-  }
-) => {
+export const GET = async (req: NextRequest) => {
   const session = await getServerSession();
-  console.log("api/regEvents/[eventId] -> event id ->>", params.eventId);
-  if (!session || !params.eventId) {
+
+  const eventId = req.nextUrl.searchParams.get("eventId");
+  //check if user is authenticated
+  if (!session || !eventId) {
     return NextResponse.json(
       {
         message: "Unauthenticated",
@@ -26,14 +19,17 @@ export const GET = async (
       }
     );
   }
-
   try {
+    //find users by role
     await dbConnect();
-    const curEvent = await eventModel.findOne({ id: params.eventId });
-
+    const TeamsId: string[] = await eventModel.find(
+      { id: eventId },
+      { TeamsAccepted_id: 1 }
+    );
+    const reqTeams = await teamModel.find({ id: { $in: TeamsId } });
     return NextResponse.json(
       {
-        data: curEvent,
+        data: reqTeams,
       },
       { status: 200 }
     );
@@ -42,7 +38,7 @@ export const GET = async (
       {
         message: err?.message,
       },
-      { status: 403 }
+      { status: 500 }
     );
   }
 };

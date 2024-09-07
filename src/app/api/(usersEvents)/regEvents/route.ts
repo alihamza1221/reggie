@@ -76,7 +76,7 @@ export const POST = async (req: NextRequest) => {
       }
     );
   }
-  console.log("api/regEvents/post: -> session", session);
+
   try {
     await dbConnect();
     const event = await eventModel.create({
