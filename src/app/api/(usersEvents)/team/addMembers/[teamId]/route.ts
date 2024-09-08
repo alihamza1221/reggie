@@ -3,9 +3,10 @@ import dbConnect from "@/db/mongooseConnect";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
+import { userModel } from "@/db/models/user";
 
 const TeamMembers = z.object({
-  membersId: z.array(z.string()),
+  membersEmail: z.array(z.string().email()),
 });
 export const POST = async (
   req: NextRequest,
@@ -19,10 +20,10 @@ export const POST = async (
 ) => {
   const session = await getServerSession();
 
-  const { membersId } = TeamMembers.parse(await req.json());
-  console.log("api/addMembers[teamId]-> members[] : ", membersId);
+  const { membersEmail } = TeamMembers.parse(await req.json());
+  console.log("api/addMembers[teamId]-> membersEmail[] : ", membersEmail);
 
-  if (!membersId || !session || !params.teamId) {
+  if (!membersEmail || !session || !params.teamId) {
     return NextResponse.json(
       {
         message: "Some error occurred!",
@@ -36,6 +37,10 @@ export const POST = async (
   try {
     await dbConnect();
 
+    const membersId = userModel.find(
+      { email: { $in: membersEmail } },
+      { _id: 0, id: 1 }
+    );
     const updatedTeam = await teamModel.findOneAndUpdate(
       { id: params.teamId },
       {

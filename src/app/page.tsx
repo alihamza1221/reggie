@@ -1,46 +1,14 @@
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
+import HeroSection from "@/components/HeroSection";
+import { signIn, useSession } from "next-auth/react";
 
 export default function Home() {
-  const { data: session, status } = useSession();
-  console.log("session client side : ", session);
-  function handleClick() {
-    const res = fetch("http://localhost:3000/api/regEvents", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: "test",
-        description: "test",
-        date: "12/11/1989",
-        location: "test",
-      }),
-    });
-  }
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <button
-        onClick={() => {
-          signIn("google");
-        }}
-        className="bg-slate-400 text-white px-4 py-2 rounded-md shadow-md"
-      >
-        Login with Google
-      </button>
-      <button
-        onClick={() => {
-          signOut();
-        }}
-        className="bg-blue-500  text-white px-4 py-2 rounded-md shadow-md"
-      >
-        Signout
-      </button>
+  const { data: session } = useSession();
 
-      <button
-        onClick={handleClick}
-        className="bg-white text-blak p-4 py-3 border rounded-xl"
-      >
-        click me
-      </button>
+  return (
+    <main className="z-1 bg-gradient-to-b from-white to-purple-50 z-1 min-h-[100vh]">
+      {/* <div className="background bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 rounded-xl  absolute top-[50%] left-[50%] w-[500px] h-[500px] blur-[150px] translate-x-[-50%] translate-y-[-50%] z-0"></div> */}
+      <HeroSection />
     </main>
   );
 }
