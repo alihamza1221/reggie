@@ -28,14 +28,23 @@ export const GET = async (req: NextRequest) => {
   }
 
   //find users by role
-  await dbConnect();
-  const reqEvents = await eventModel.find();
-  return NextResponse.json(
-    {
-      data: reqEvents,
-    },
-    { status: 200 }
-  );
+  try {
+    await dbConnect();
+    const reqEvents = await eventModel.find();
+    return NextResponse.json(
+      {
+        data: reqEvents,
+      },
+      { status: 200 }
+    );
+  } catch (err: any) {
+    return NextResponse.json(
+      {
+        message: err?.message,
+      },
+      { status: 500 }
+    );
+  }
 };
 
 //add users with rule as organization

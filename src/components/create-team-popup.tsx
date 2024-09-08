@@ -1,11 +1,17 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { PlusIcon, Upload } from 'lucide-react'
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PlusIcon, Upload } from "lucide-react";
 
 interface Team {
   id: string;
@@ -15,47 +21,53 @@ interface Team {
 }
 
 export function CreateTeamPopup() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const [team, setTeam] = useState<Partial<Team>>({
-    name: '',
-    image: '',
-    members: []
-  })
-  const [memberEmail, setMemberEmail] = useState('')
+    name: "",
+    image: "",
+    members: [],
+  });
+  const [memberEmail, setMemberEmail] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setTeam(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setTeam((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleAddMember = () => {
     if (memberEmail && !team.members?.includes(memberEmail)) {
-      setTeam(prev => ({ ...prev, members: [...(prev.members || []), memberEmail] }))
-      setMemberEmail('')
+      setTeam((prev) => ({
+        ...prev,
+        members: [...(prev.members || []), memberEmail],
+      }));
+      setMemberEmail("");
     }
-  }
+  };
 
   const handleRemoveMember = (email: string) => {
-    setTeam(prev => ({ ...prev, members: prev.members?.filter(m => m !== email) || [] }))
-  }
+    setTeam((prev) => ({
+      ...prev,
+      members: prev.members?.filter((m) => m !== email) || [],
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Submitting team:', team)
-    setIsOpen(false)
-    setTeam({ name: '', image: '', members: [] })
-  }
+    e.preventDefault();
+    console.log("Submitting team:", team);
+    setIsOpen(false);
+    setTeam({ name: "", image: "", members: [] });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button 
-          className="bg-[#F3F5FC] text-black hover:bg-[#E1E5F9]"
+        <button
+          className="flex hover:text-slate-600"
           onClick={() => setIsOpen(true)}
         >
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Create Team
-        </Button>
+          <PlusIcon />
+          <span className="pl-3">Create Team</span>
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -83,7 +95,12 @@ export function CreateTeamPopup() {
                 onChange={handleInputChange}
                 placeholder="Enter image URL"
               />
-              <Button type="button" size="icon" variant="outline" className="bg-[#F3F5FC] hover:bg-[#E1E5F9]">
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                className="bg-[#F3F5FC] hover:bg-[#E1E5F9]"
+              >
                 <Upload className="h-4 w-4" />
                 <span className="sr-only">Upload image</span>
               </Button>
@@ -98,8 +115,8 @@ export function CreateTeamPopup() {
                 onChange={(e) => setMemberEmail(e.target.value)}
                 placeholder="Enter member email"
               />
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 onClick={handleAddMember}
                 className="bg-[#F3F5FC] text-black hover:bg-[#E1E5F9]"
               >
@@ -108,12 +125,15 @@ export function CreateTeamPopup() {
             </div>
             <ul className="mt-2 space-y-1">
               {team.members?.map((member, index) => (
-                <li key={index} className="flex items-center justify-between bg-muted p-2 rounded-md">
+                <li
+                  key={index}
+                  className="flex items-center justify-between bg-muted p-2 rounded-md"
+                >
                   <span>{member}</span>
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleRemoveMember(member)}
                     className="hover:bg-[#F3F5FC]"
                   >
@@ -123,8 +143,8 @@ export function CreateTeamPopup() {
               ))}
             </ul>
           </div>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-[#F3F5FC] text-black hover:bg-[#E1E5F9]"
           >
             Create Team
@@ -132,5 +152,5 @@ export function CreateTeamPopup() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
