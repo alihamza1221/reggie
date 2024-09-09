@@ -35,6 +35,7 @@ import { Team } from "@/db/models/team";
 import { useState } from "react";
 import { IUser } from "@/db/models/user";
 import axios from "axios";
+import { headers } from "next/headers";
 
 const Dashboard = () => {
   const { data: session } = useSession();
@@ -179,25 +180,37 @@ function SidebarProjectsSection() {
 
 function SidebarProfileSection({ session }: { session: Session }) {
   const [team, setTeam] = useState<null | Team>(null);
-  const [members, setMembers] = useState<IUser[]>([]);
+  const [membersInfo, setMembersInfo] = useState<IUser[]>([]);
 
   async function getTeamInfo() {
     // fetch team info
     const res = await axios.get("/api/team/my", {
-      headers: {
-        "Content-Type": "application/json",
-      },
       params: {
         userId: session.user?.id,
       },
     });
-    console.log("pages/dashboard-> res: ", res);
-    if (!res.data) {
-      //@ts-ignore
-      console.log(res?.message);
+    console.log("pages/dashboard-> res.data.data[0]", res.data.data[0]);
+    if (!res.data?.data) {
+      console.log(res.data?.message);
     }
-    setTeam(res.data);
+    setTeam(res.data.data[0]);
+    const { members } = res.data.data[0];
+    console.log("pages/dashboard-> {members}", members);
     // fetch team members
+    const response = await axios.post("/api/members", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      //memberIds: z.array(z.string()).default([]),
+
+      memberIds: members,
+    });
+
+    if (!response.data?.data) {
+      console.log(response.data?.message);
+    }
+    console.log("pages/dashboard-> response.data>> members", response.data);
+    setMembersInfo(response.data.data);
   }
   return (
     <div className="feature-Profile-lookup mb-3">
@@ -219,21 +232,34 @@ function SidebarProfileSection({ session }: { session: Session }) {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle className="flex gap-2 items-center">
-                <Avatar>
+              <AlertDialogTitle className="flex gap-2 items-center  border-b-2 border-slate-200 shadow-md py-3 px-2">
+                <Avatar
+                  style={{
+                    height: "60px",
+                    width: "60px",
+                  }}
+                >
                   <AvatarImage src={team?.image ?? ""} />
                   <AvatarFallback>UR</AvatarFallback>
                 </Avatar>
                 {team?.name ?? "Team Name"}
               </AlertDialogTitle>
               <div className="team-members-lookup flex-col gap-2">
-                {members.map((member) => (
-                  <div className="member-info flex gap-2 items-center justify-start">
+                <span className="bg-slate-800 text-white border-1 rounded-full px-2 py-1 mb-3">
+                  Members
+                </span>
+                {membersInfo.map((member) => (
+                  <div
+                    key={member.id}
+                    className="member-info flex p-2 gap-2 items-center justify-start"
+                  >
                     <Avatar>
                       <AvatarImage src={member?.image ?? ""} />
                       <AvatarFallback>UR</AvatarFallback>
                     </Avatar>
-                    <span>{member?.name}</span>
+                    <span className="text-md border-2 rounded-3xl px-3  border-slate-300">
+                      {member?.name}
+                    </span>
                     <span>{member?.email}</span>
                   </div>
                 ))}
