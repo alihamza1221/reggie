@@ -21,7 +21,12 @@ export const POST = async (
   const session = await getServerSession();
 
   const { membersEmail } = TeamMembers.parse(await req.json());
-  console.log("api/team/addMembers[teamId]-> membersEmail[] : ", membersEmail);
+  console.log(
+    "api/team/addMembers[teamId]-> membersEmail[] : ",
+    membersEmail,
+    "teamId",
+    params.teamId
+  );
 
   if (!membersEmail || !session || !params.teamId) {
     return NextResponse.json(

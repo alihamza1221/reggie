@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusIcon, Upload } from "lucide-react";
-
+import axios from "axios";
 interface Team {
   id: string;
   name: string;
@@ -51,10 +51,21 @@ export function CreateTeamPopup() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting team:", team);
-    setIsOpen(false);
+    console.log(team);
+
+    const response = await axios.post("/api/members/byEmail", {
+      memberEmails: team.members,
+    });
+    const { data: members } = response.data;
+
+    const result = await axios.post("/api/team", {
+      ...team,
+      members,
+    });
+
+    console.log("res.data createteampopup: ", result.data);
     setTeam({ name: "", image: "", members: [] });
   };
 

@@ -8,6 +8,9 @@ export const nextAuthOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      httpOptions: {
+        timeout: 10000, // 10 seconds
+      },
       profile(profile) {
         return {
           id: profile.sub,
@@ -43,8 +46,7 @@ export const nextAuthOptions: NextAuthOptions = {
       return true;
     },
     //@ts-ignore
-    async jwt({ token, user }) {
-      console.log("api/auth/jwt callback user ->", user, "token_>", token);
+    async jwt({ token }) {
       return token;
     },
     //update user in session
@@ -58,9 +60,9 @@ export const nextAuthOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user.id = token.sub ?? "";
       session.user.provider = "Google";
-      console.log("api/auth/nextauth session callback->:", session);
+
       /*  @session.user = { 
-        id: "sdjfj2323r2klje934";
+        id: "sdjfj23r2klje934";
         username: "username";
         email: email@gmail.com;
         image: https://example.com/image.jpg;

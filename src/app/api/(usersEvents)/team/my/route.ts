@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
   const session = await getServerSession();
-
   const userId = req.nextUrl.searchParams.get("userId");
   //check if user is authenticated
   if (!session || !userId) {
@@ -21,9 +20,7 @@ export const GET = async (req: NextRequest) => {
   try {
     await dbConnect();
     const reqTeams = await teamModel.find({
-      members: {
-        $elemMatch: { $eq: userId },
-      },
+      members: { $in: [userId] },
     });
     return NextResponse.json(
       {

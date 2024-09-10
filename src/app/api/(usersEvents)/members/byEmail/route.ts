@@ -5,14 +5,15 @@ import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
 
 const memberSchema = z.object({
-  memberIds: z.array(z.string()).default([]),
+  memberEmails: z.array(z.string().email()).default([]),
 });
 export const POST = async (req: NextRequest) => {
   const session = await getServerSession();
   const body = await req.json();
+  console.log("api/members-> body: >>", body);
 
-  const { memberIds } = memberSchema.parse(body);
-
+  const { memberEmails } = memberSchema.parse(body);
+  console.log("api/members-> {memberEmails}", memberEmails);
   //check if user is authenticated
   if (!session) {
     return NextResponse.json(
@@ -28,11 +29,15 @@ export const POST = async (req: NextRequest) => {
   try {
     //find users by role
     await dbConnect();
-    const membersInfo = await userModel.find({ id: { $in: memberIds } });
+    const memberIds = await userModel.find(
+      { email: { $in: memberEmails } },
+      { _id: 0, id: 1 }
+    );
 
+    const memberIdsArray = memberIds.map((member) => member.id);
     return NextResponse.json(
       {
-        data: membersInfo,
+        data: memberIdsArray,
       },
       { status: 200 }
     );

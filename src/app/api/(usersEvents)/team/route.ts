@@ -50,7 +50,7 @@ export const POST = async (req: NextRequest) => {
   if (!session || !curTeam) {
     return NextResponse.json(
       {
-        data: "Invalid request",
+        message: "Invalid request",
       },
       {
         status: 403,
