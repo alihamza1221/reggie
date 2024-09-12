@@ -12,7 +12,9 @@ export default async function dbConnect() {
     return true;
   }
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || "");
+    const conn = await mongoose.connect(
+      process.env.MONGODB_URI || process.env.MONGODB_URI_Local || ""
+    );
     connection.isConnected = conn.connections[0].readyState;
     console.log("new connection: " + connection.isConnected);
     return connection.isConnected == 1

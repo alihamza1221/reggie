@@ -38,6 +38,7 @@ export const GET = async (req: NextRequest) => {
       { status: 200 }
     );
   } catch (err: any) {
+    console.log("api/regevents get:", err);
     return NextResponse.json(
       {
         message: err?.message,
