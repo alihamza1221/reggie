@@ -1,3 +1,4 @@
+import { TechEventType } from "@/types/eventCategory";
 import mongoose, { Schema, Document } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
@@ -12,6 +13,9 @@ interface IEvent extends Document {
 
   TeamsApplied_id: [string];
   TeamsAccepted_id: [string];
+
+  tags: [string];
+  category: TechEventType;
 
   userId: string;
 }
