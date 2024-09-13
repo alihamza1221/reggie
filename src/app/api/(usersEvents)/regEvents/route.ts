@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { nextAuthOptions } from "../../auth/[...nextauth]/authOptions";
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "next-auth";
+import { zodTechEventTypeSchema } from "@/types/eventCategory";
 import { z } from "zod";
 
 const createEventSchema = z.object({
@@ -11,6 +12,8 @@ const createEventSchema = z.object({
   description: z.string(),
   date: z.string(),
   location: z.string(),
+  tags: z.array(z.string()).default([]),
+  category: zodTechEventTypeSchema,
 });
 export const GET = async (req: NextRequest) => {
   const session: Session | null = await getServerSession(nextAuthOptions);
@@ -70,6 +73,8 @@ export const POST = async (req: NextRequest) => {
     description,
     date: strDate,
     location,
+    tags,
+    category,
   } = createEventSchema.parse(await req.json());
 
   // strDate = "12/11/1989" -> Date object
@@ -95,6 +100,8 @@ export const POST = async (req: NextRequest) => {
       date,
       location,
       userId: session.user?.id,
+      tags,
+      category,
     });
     await event.save();
   } catch (err) {

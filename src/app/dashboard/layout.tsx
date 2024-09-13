@@ -6,6 +6,7 @@ import {
   ChartSpline,
   MapPin,
   PieChart,
+  Router,
   ScissorsLineDashedIcon,
   Search,
   ShieldHalf,
@@ -37,7 +38,7 @@ import { IUser } from "@/db/models/user";
 import axios, { AxiosError } from "axios";
 import { AddMembersPopup } from "@/components/add-members-popup";
 import GPTCommandPopup from "@/components/ui/user-input-cmd";
-
+import { useRouter } from "next/navigation";
 const Dashboard = ({
   children,
 }: Readonly<{
@@ -133,6 +134,10 @@ const handleuserInputSubmit = (
   console.log(userInput);
 };
 function SidebarEventsSection() {
+  const router = useRouter();
+  function handleClick(eventStatus: "ActiveEvents" | "PreviousEvents") {
+    router.push(`events?type=${eventStatus}`);
+  }
   return (
     <div className="feature-Events-lookup mb-3">
       <div className="feature-lablel text-lg font-bold text-slate-400 hover:text-slate-600 flex justify-between">
@@ -143,11 +148,17 @@ function SidebarEventsSection() {
         <ChevronRight className="ml-6" />
       </div>
       <div className="text-lg font-bold text-slate-400  ml-5 mt-3 border-l-[1px] border-slate-400 px-2">
-        <div className="flex hover:text-slate-600">
+        <div
+          className="flex hover:text-slate-600 cursor-pointer"
+          onClick={() => handleClick("ActiveEvents")}
+        >
           <Search />
           <span className="pl-3">Active Events</span>
         </div>
-        <div className="flex my-3 hover:text-slate-600">
+        <div
+          className="flex my-3 hover:text-slate-600 cursor-pointer"
+          onClick={() => handleClick("PreviousEvents")}
+        >
           <ScissorsLineDashedIcon />
           <span className="pl-3">Previous Events</span>
         </div>
