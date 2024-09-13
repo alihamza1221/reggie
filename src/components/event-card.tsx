@@ -22,7 +22,7 @@ const EventCard = (props: {
   return (
     <div className="bg-sky-50 rounded-xl w-full  lg:w-3/4  mr-2 border-[1px] border-violet-400 p-2 my-3 w-full">
       <div className="event-log flex flex-col lg:flex-row justify-between">
-        <h3 className="text-3xl  font-bold bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-clip-text text-transparent">
+        <h3 className="text-2xl  font-bold bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-clip-text text-transparent">
           {props.name}
         </h3>
         <Tag
