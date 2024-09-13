@@ -12,15 +12,14 @@ export type TechEventType =
   | "Bootcamp";
 
 export const zodTechEventTypeSchema = z.enum([
-    "Workshop",
-    "Meetup",
-    "Conference",
-    "Hackathon",
-    "CodingCompetition",
-    "Webinar",
-    "Seminar",
-    "NetworkingEvent",
-    "TechTalk",
-    "Bootcamp",
-    ]);
-])
+  "Workshop",
+  "Meetup",
+  "Conference",
+  "Hackathon",
+  "CodingCompetition",
+  "Webinar",
+  "Seminar",
+  "NetworkingEvent",
+  "TechTalk",
+  "Bootcamp",
+]);

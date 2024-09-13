@@ -40,6 +40,25 @@ const eventSchema: Schema<IEvent> = new Schema<IEvent>({
     ref: "Team",
   },
 
+  tags: { type: [String], required: true, default: [] },
+  category: {
+    type: String,
+    required: true,
+    enum: [
+      "Workshop",
+      "Meetup",
+      "Conference",
+      "Hackathon",
+      "CodingCompetition",
+      "Webinar",
+      "Seminar",
+      "NetworkingEvent",
+      "TechTalk",
+      "Bootcamp",
+    ],
+    default: "Workshop",
+  },
+
   userId: { type: String, required: true, ref: "User" },
 });
 
