@@ -36,6 +36,7 @@ import { useState } from "react";
 import { IUser } from "@/db/models/user";
 import axios, { AxiosError } from "axios";
 import { AddMembersPopup } from "@/components/add-members-popup";
+import GPTCommandPopup from "@/components/ui/user-input-cmd";
 
 const Dashboard = ({
   children,
@@ -125,6 +126,12 @@ function SidebarTeamsSection() {
     </div>
   );
 }
+const handleuserInputSubmit = (
+  userInput: string,
+  type: string = "Register"
+) => {
+  console.log(userInput);
+};
 function SidebarEventsSection() {
   return (
     <div className="feature-Events-lookup mb-3">
@@ -146,8 +153,7 @@ function SidebarEventsSection() {
         </div>
         <hr className="mt-2 mb-1" />
         <div className="flex my-3 hover:text-slate-600">
-          <MapPin />
-          <span className="pl-3">Register Event</span>
+          <GPTCommandPopup onSubmit={handleuserInputSubmit} />
         </div>
       </div>
     </div>
