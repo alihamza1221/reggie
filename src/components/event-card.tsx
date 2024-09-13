@@ -1,9 +1,12 @@
+import { Button } from "./ui/button";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 const EventCard = (props: {
+  id: string;
   name: string;
   createdAt: Date;
   date: Date;
   location: string;
-  teamsAccepted: number;
   teamsApplied: number;
 }) => {
   const date = new Date(props.date);
@@ -25,17 +28,29 @@ const EventCard = (props: {
         <h3 className="text-2xl  font-bold bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-clip-text text-transparent">
           {props.name}
         </h3>
-        <Tag
-          className={"bg-sky-400"}
-          text={`Started at: ${formattedDate(props.createdAt)}`}
-        />
+        <div>
+          <Tag
+            className={"bg-sky-400"}
+            text={`Started at: ${formattedDate(props.createdAt)}`}
+          />
+        </div>
       </div>
       <div className="event-details my-4">
         <Tag
           className={"bg-white"}
           text={`Ending at: ${formattedDate(props.date)}`}
         />
+        <Tag className="bg-white" text={`Location: ${props.location}`} />
       </div>
+      <Link href={{ pathname: `events/${props.id}` }}>
+        <Button
+          variant="outline"
+          className="bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 mt-2"
+        >
+          Event Info
+          <ChevronRight className="h-4 w-4 ml-2" />
+        </Button>
+      </Link>
     </div>
   );
 };
@@ -46,7 +61,7 @@ interface TagProps {
 const Tag: React.FC<TagProps> = ({ className, text }) => {
   return (
     <div
-      className={`px-3 py-1 w-full lg:max-w-max lg:inline-block rounded-full border-[1px] border-slate-200 mr-2 mt-2  ${className}`}
+      className={`px-3 py-1 w-full lg:max-w-min lg:inline rounded-full border-[1px] border-slate-200 mr-2 mt-2  ${className}`}
     >
       {text}
     </div>

@@ -136,7 +136,7 @@ const handleuserInputSubmit = (
 function SidebarEventsSection() {
   const router = useRouter();
   function handleClick(eventStatus: "ActiveEvents" | "PreviousEvents") {
-    router.push(`events?type=${eventStatus}`);
+    router.push(`/dashboard/events?type=${eventStatus}`);
   }
   return (
     <div className="feature-Events-lookup mb-3">

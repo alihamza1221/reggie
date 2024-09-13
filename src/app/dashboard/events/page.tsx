@@ -122,12 +122,13 @@ const Events = () => {
                 (a, b) =>
                   new Date(b.date).getTime() - new Date(a.date).getTime()
               )
-              ?.slice(0, 5)
+              ?.slice(0, 3)
               .map((event) => (
                 <EventCard
+                  id={event.id}
+                  key={event.id}
                   name={event.name}
                   teamsApplied={event.TeamsApplied_id.length}
-                  teamsAccepted={event.TeamsAccepted_id.length}
                   createdAt={event.createdAt}
                   date={event.date as Date}
                   location={event.location}
