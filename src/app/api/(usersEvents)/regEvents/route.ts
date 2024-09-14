@@ -5,7 +5,7 @@ import { nextAuthOptions } from "../../auth/[...nextauth]/authOptions";
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "next-auth";
 import { zodTechEventTypeSchema } from "@/types/eventCategory";
-import { z } from "zod";
+import { date, z } from "zod";
 
 const createEventSchema = z.object({
   name: z.string(),
@@ -33,7 +33,11 @@ export const GET = async (req: NextRequest) => {
   //find users by role
   try {
     await dbConnect();
-    const reqEvents = await eventModel.find();
+    const reqEvents = await eventModel
+      .find()
+      .sort({ date: -1 })
+      .limit(3)
+      .exec();
     return NextResponse.json(
       {
         data: reqEvents,

@@ -10,23 +10,49 @@ import { IEvent } from "@/db/models/event";
 import { useState, useEffect } from "react";
 import EventCard from "@/components/event-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
 const Events = () => {
   const searchParams = useSearchParams();
 
   const eventStatus: string | null = searchParams.get("eventStatus");
 
-  const [events, setEvents] = useState<IEvent[] | null>([]);
+  const [recentEvents, setRecentEvents] = useState<IEvent[] | null>([]);
+  const [events, setEvents] = useState<IEvent[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setLoading(true);
     const reqEventsData = async () => {
       try {
-        const res = await axios.get(`/api/regEvents`);
+        const res_recent = await axios.get(`/api/regEvents`);
 
-        setEvents(res.data.data);
-        console.log("res.data.data: ", res.data.data);
-        console.log("events: ", events);
+        setRecentEvents(res_recent.data.data);
+        console.log("res.data.data: ", res_recent.data.data);
+
+        const res = await axios.get(`/api/regEvents/getEventsByStatus`, {
+          params: {
+            eventStatus,
+          },
+        });
         setLoading(false);
       } catch (err) {
         const error = err as AxiosError;
@@ -117,28 +143,89 @@ const Events = () => {
           </div>
           <div className="events-lookup-bg bg-white rounded-xl my-10 px-3 py-5">
             <div className="label text-xl font-bold mb-3">Recent Events</div>
-            {events
-              ?.sort(
-                (a, b) =>
-                  new Date(b.date).getTime() - new Date(a.date).getTime()
-              )
-              ?.slice(0, 3)
-              .map((event) => (
-                <EventCard
-                  id={event.id}
-                  key={event.id}
-                  name={event.name}
-                  teamsApplied={event.TeamsApplied_id.length}
-                  createdAt={event.createdAt}
-                  date={event.date as Date}
-                  location={event.location}
-                />
-              ))}
+            {recentEvents?.map((event) => (
+              <EventCard
+                id={event.id}
+                key={event.id}
+                name={event.name}
+                teamsApplied={event.TeamsApplied_id.length}
+                createdAt={event.createdAt}
+                date={event.date as Date}
+                location={event.location}
+              />
+            ))}
           </div>
+          <EventsTableView />
         </div>
       </div>
     </ScrollArea>
   );
 };
+
+function EventsTableView() {
+  return (
+    <>
+      <Table>
+        <TableCaption>A list of your recent invoices.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Invoice</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Method</TableHead>
+            <TableHead className="text-right">Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {/* {invoices.map((invoice) => (
+          <TableRow key={invoice.invoice}>
+            <TableCell className="font-medium">{invoice.invoice}</TableCell>
+            <TableCell>{invoice.paymentStatus}</TableCell>
+            <TableCell>{invoice.paymentMethod}</TableCell>
+            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+          </TableRow>
+        ))} */}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={3}>Total</TableCell>
+            <TableCell className="text-right">$2,500.00</TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
+      <div>
+        <EventsPagination />
+      </div>
+    </>
+  );
+}
+
+export function EventsPagination() {
+  return (
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            2
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">3</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}
 
 export default Events;
